@@ -13,11 +13,15 @@ import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private List<Task> tasks;
-    private OnTaskClickListener onTaskClickListener;
+    private OnTaskClickListener listener;
 
-    public TaskAdapter(List<Task> tasks, OnTaskClickListener onTaskClickListener) {
-        this.tasks = tasks;
-        this.onTaskClickListener = onTaskClickListener;
+    // Supprimer ce constructeur redondant
+    // public TaskAdapter(List<Task> tasks, OnTaskClickListener taskId) {
+    // }
+
+    public TaskAdapter(List<Task> tasks, OnTaskClickListener listener) {
+        this.tasks = tasks != null ? tasks : new ArrayList<>();
+        this.listener = listener;
     }
 
     @Override
@@ -36,12 +40,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         // Gérer les clics sur les boutons de suppression et modification
         holder.deleteButton.setOnClickListener(v -> {
-            tasks.remove(position); // Suppression de l'élément de la liste
-            notifyItemRemoved(position); // Notifie l'adaptateur de la suppression
-            onTaskClickListener.onDeleteClick(task); // Action après suppression
+            // Appeler le listener avant de modifier la liste locale
+            if (listener != null) {
+                listener.onDeleteClick(task);
+            }
         });
 
-        holder.editButton.setOnClickListener(v -> onTaskClickListener.onEditClick(task)); // Modification
+        holder.editButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEditClick(task);
+            }
+        });
     }
 
     @Override
@@ -53,12 +62,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void updateTasks(List<Task> tasks) {
         this.tasks = tasks != null ? tasks : new ArrayList<>();
         notifyDataSetChanged();
-    }
-
-    // Interface pour les clics sur les tâches
-    public interface OnTaskClickListener {
-        void onDeleteClick(Task task);
-        void onEditClick(Task task);
     }
 
     // ViewHolder pour chaque élément de la liste

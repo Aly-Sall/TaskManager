@@ -25,8 +25,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
-
-        // Définir un LayoutManager pour le RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialisation de la base de données dans un thread séparé
@@ -42,18 +40,24 @@ public class MainActivity extends AppCompatActivity {
                 // Observer les changements dans la liste des tâches
                 taskList.observe(this, tasks -> {
                     if (adapter == null) {
-                        adapter = new TaskAdapter(tasks, task -> {
-                            // Logique pour supprimer une tâche
-                            new Thread(() -> taskDatabase.taskDao().deleteTask(task)).start();
-                        }, task -> {
-                            // Logique pour modifier une tâche
-                            Intent intent = new Intent(MainActivity.this, EditTaskActivity.class);
-                            intent.putExtra("taskId", task.getId()); // Passer l'ID de la tâche
-                            startActivity(intent);
+                        adapter = new TaskAdapter(tasks, new OnTaskClickListener() {
+                            @Override
+                            public void onDeleteClick(Task task) {
+                                // Logique pour supprimer une tâche
+                                new Thread(() -> taskDatabase.taskDao().deleteTask(task)).start();
+                            }
+
+                            @Override
+                            public void onEditClick(Task task) {
+                                // Logique pour modifier une tâche
+                                Intent intent = new Intent(MainActivity.this, EditTaskActivity.class);
+                                intent.putExtra("taskId", task.getId());
+                                startActivity(intent);
+                            }
                         });
                         recyclerView.setAdapter(adapter);
                     } else {
-                        adapter.updateTasks(tasks); // Mettre à jour la liste des tâches
+                        adapter.updateTasks(tasks);
                     }
                 });
             });
@@ -73,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Recharger les données après avoir ajouté une tâche
         if (taskList != null) {
-            taskList.removeObservers(this); // Supprimer les anciens observateurs
+            taskList.removeObservers(this);
         }
 
         new Thread(() -> {
@@ -87,18 +91,24 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 taskList.observe(this, tasks -> {
                     if (adapter == null) {
-                        adapter = new TaskAdapter(tasks, task -> {
-                            // Logique pour supprimer une tâche
-                            new Thread(() -> taskDatabase.taskDao().deleteTask(task)).start();
-                        }, task -> {
-                            // Logique pour modifier une tâche
-                            Intent intent = new Intent(MainActivity.this, EditTaskActivity.class);
-                            intent.putExtra("taskId", task.getId()); // Passer l'ID de la tâch
-                            startActivity(intent);
+                        adapter = new TaskAdapter(tasks, new OnTaskClickListener() {
+                            @Override
+                            public void onDeleteClick(Task task) {
+                                // Logique pour supprimer une tâche
+                                new Thread(() -> taskDatabase.taskDao().deleteTask(task)).start();
+                            }
+
+                            @Override
+                            public void onEditClick(Task task) {
+                                // Logique pour modifier une tâche
+                                Intent intent = new Intent(MainActivity.this, EditTaskActivity.class);
+                                intent.putExtra("taskId", task.getId());
+                                startActivity(intent);
+                            }
                         });
                         recyclerView.setAdapter(adapter);
                     } else {
-                        adapter.updateTasks(tasks); // Mettre à jour la liste des tâches
+                        adapter.updateTasks(tasks);
                     }
                 });
             });
