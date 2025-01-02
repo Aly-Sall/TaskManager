@@ -1,24 +1,34 @@
 package com.example.managetask;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "task_table")
 public class Task {
-
     @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "task_title")
     private String title;
+
+    @ColumnInfo(name = "task_description")
     private String description;
-    private String priority;
-    private String dueDate;
+
+    @ColumnInfo(name = "task_complete_status")
     private boolean isComplete;
 
-    // Constructeur sans paramètres (nécessaire pour Room)
+    @ColumnInfo(name = "task_priority")
+    private String priority;
+
+    @ColumnInfo(name = "task_due_date")
+    private String dueDate;
+
+    // Empty constructor required by Room
     public Task() {
     }
 
-    // Constructeur avec paramètres pour initialiser l'objet
+    // Constructor with parameters
     public Task(String title, String description, String priority, String dueDate, boolean isComplete) {
         this.title = title;
         this.description = description;
@@ -27,7 +37,7 @@ public class Task {
         this.isComplete = isComplete;
     }
 
-    // Getter et Setter pour 'id'
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -36,7 +46,6 @@ public class Task {
         this.id = id;
     }
 
-    // Getter et Setter pour 'title'
     public String getTitle() {
         return title;
     }
@@ -45,7 +54,6 @@ public class Task {
         this.title = title;
     }
 
-    // Getter et Setter pour 'description'
     public String getDescription() {
         return description;
     }
@@ -54,7 +62,14 @@ public class Task {
         this.description = description;
     }
 
-    // Getter et Setter pour 'priority'
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public void setComplete(boolean isComplete) {
+        this.isComplete = isComplete;
+    }
+
     public String getPriority() {
         return priority;
     }
@@ -63,21 +78,11 @@ public class Task {
         this.priority = priority;
     }
 
-    // Getter et Setter pour 'dueDate'
     public String getDueDate() {
         return dueDate;
     }
 
     public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
-    }
-
-    // Getter et Setter pour 'isComplete'
-    public boolean isComplete() {
-        return isComplete;
-    }
-
-    public void setComplete(boolean complete) {
-        isComplete = complete;
     }
 }

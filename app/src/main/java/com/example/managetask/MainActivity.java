@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                         }, task -> {
                             // Logique pour modifier une tâche
                             Intent intent = new Intent(MainActivity.this, EditTaskActivity.class);
-                            intent.putExtra("taskId", task.getId()); // Passer l'ID de la tâche
+                            intent.putExtra("taskId", task.getId()); // Passer l'ID de la tâch
                             startActivity(intent);
                         });
                         recyclerView.setAdapter(adapter);

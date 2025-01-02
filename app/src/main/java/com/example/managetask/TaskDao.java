@@ -7,8 +7,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.managetask.Task;
-
 import java.util.List;
 
 @Dao
@@ -28,16 +26,16 @@ public interface TaskDao {
 
     @Query("SELECT * FROM task_table WHERE id = :taskId")
     Task getTaskById(int taskId);
-    @Query("SELECT * FROM task_table WHERE isComplete = 0")
+
+    @Query("SELECT * FROM task_table WHERE task_complete_status = 0")
     LiveData<List<Task>> getIncompleteTasks();
 
-    @Query("SELECT * FROM task_table WHERE isComplete = 1")
+    @Query("SELECT * FROM task_table WHERE task_complete_status = 1")
     LiveData<List<Task>> getCompleteTasks();
 
-    default void deleteTask(Task task) {
-        delete(task);}
+    default void deleteTask(Object task) {
+        delete((Task) task);
+    }
 
 
-
-    ;
 }

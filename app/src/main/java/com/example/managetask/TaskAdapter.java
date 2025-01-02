@@ -8,17 +8,16 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private List<Task> tasks;
-    private OnTaskClickListener deleteListener;
-    private OnTaskClickListener editListener;
+    private OnTaskClickListener onTaskClickListener;
 
-    public TaskAdapter(List<Task> tasks, OnTaskClickListener deleteListener, OnTaskClickListener editListener) {
+    public TaskAdapter(List<Task> tasks, OnTaskClickListener onTaskClickListener) {
         this.tasks = tasks;
-        this.deleteListener = deleteListener;
-        this.editListener = editListener;
+        this.onTaskClickListener = onTaskClickListener;
     }
 
     @Override
@@ -36,8 +35,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.descriptionTextView.setText(task.getDescription());
 
         // Gérer les clics sur les boutons de suppression et modification
-        holder.deleteButton.setOnClickListener(v -> deleteListener.onClick(task));
-        holder.editButton.setOnClickListener(v -> editListener.onClick(task));
+        holder.deleteButton.setOnClickListener(v -> {
+            tasks.remove(position); // Suppression de l'élément de la liste
+            notifyItemRemoved(position); // Notifie l'adaptateur de la suppression
+            onTaskClickListener.onDeleteClick(task); // Action après suppression
+        });
+
+        holder.editButton.setOnClickListener(v -> onTaskClickListener.onEditClick(task)); // Modification
     }
 
     @Override
@@ -47,13 +51,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     // Méthode pour mettre à jour les tâches
     public void updateTasks(List<Task> tasks) {
-        this.tasks = tasks;
+        this.tasks = tasks != null ? tasks : new ArrayList<>();
         notifyDataSetChanged();
     }
 
     // Interface pour les clics sur les tâches
     public interface OnTaskClickListener {
-        void onClick(Task task);
+        void onDeleteClick(Task task);
+        void onEditClick(Task task);
     }
 
     // ViewHolder pour chaque élément de la liste
